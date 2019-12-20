@@ -4,8 +4,13 @@
 set -ex
 
 if [ "$SPARK_MASTER_HOST" = "" ]; then
-SPARK_MASTER_HOST=$(hostname)
-echo "Master host set to $SPARK_MASTER_HOST"
+	SPARK_MASTER_HOST=$(hostname -f)
+	echo "Master host set to $SPARK_MASTER_HOST"
+fi
+
+if [ "$SPARK_LOCAL_IP" = "" ]; then
+	SPARK_LOCAL_IP=$(hostname -i)
+	echo "Local IP set to $SPARK_LOCAL_IP"
 fi
 
 SPARK_CMD="$1"
@@ -15,10 +20,10 @@ case "$SPARK_CMD" in
   CLASS="org.apache.spark.deploy.master.Master"
     CMD=(
       spark-daemon.sh start $CLASS 1 \
---host $SPARK_MASTER_HOST
---port $SPARK_MASTER_PORT
---webui-port $SPARK_MASTER_WEBUI_PORT \
- "$@"
+	--host $SPARK_MASTER_HOST
+	--port $SPARK_MASTER_PORT
+	--webui-port $SPARK_MASTER_WEBUI_PORT \
+	  "$@"
     )
     ;;
   worker)
@@ -26,8 +31,18 @@ case "$SPARK_CMD" in
   CLASS="org.apache.spark.deploy.worker.Worker"
     CMD=(
       spark-daemon.sh start $CLASS 1 \
---webui-port $SPARK_WORKER_WEBUI_PORT \
- "$@"
+	--webui-port $SPARK_WORKER_WEBUI_PORT \
+	  "$@"
+    )
+    ;;
+  shell)
+  export SPARK_SUBMIT_OPTS="$SPARK_SUBMIT_OPTS -Dscala.usejavacp=true"
+  shift 1
+  CLASS="org.apache.spark.repl.Main"
+    CMD=(
+	  spark-submit --class $CLASS \
+	  --name "Spark shell" \
+	  "$@"
     )
     ;;
   *)
