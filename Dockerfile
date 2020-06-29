@@ -1,7 +1,7 @@
 FROM openjdk:8-alpine
 LABEL maintainer="JS Minet"
 
-ENV SPARK_VERSION 2.4.5
+ENV SPARK_VERSION 2.4.6
 ENV HADOOP_VERSION 2.7
 ENV SPARK_HOME /opt/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}
 ENV SPARK_MASTER_PORT ${SPARK_MASTER_PORT:-7077}
@@ -25,23 +25,24 @@ ENV BUILD_DEPS \
 
 ENV PATH $PATH:${SPARK_HOME}/bin:${SPARK_HOME}/sbin
 
+COPY docker-entrypoint.sh /usr/local/bin/
+
 WORKDIR /opt
 
 RUN set -ex && \
-	apk update && \
-	apk add --no-cache ${BUILD_DEPS} && \
-	wget --progress=bar:force:noscroll -O spark-bin-hadoop.tgz \
-		"https://www-eu.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz" && \
-	tar -xvf spark-bin-hadoop.tgz && \
-	rm spark-bin-hadoop.tgz && \
-	cd ${SPARK_HOME} && \
-	rm -rf data examples licenses kubernetes R yarn python && \
-	apk del tar wget && \
-	rm -rf /var/cache/apk/*
+        apk update && \
+        apk add --no-cache ${BUILD_DEPS} && \
+        wget --progress=bar:force:noscroll -O spark-bin-hadoop.tgz \
+                "https://www-eu.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz" && \
+        tar -xvf spark-bin-hadoop.tgz && \
+        rm spark-bin-hadoop.tgz && \
+        cd ${SPARK_HOME} && \
+        rm -rf data examples licenses kubernetes R yarn python && \
+        chmod +x /usr/local/bin/docker-entrypoint.sh && \
+        apk del tar wget && \
+        rm -rf /var/cache/apk/*
 
-COPY entrypoint.sh /opt
-RUN chmod g+x /opt/entrypoint.sh
-ENTRYPOINT ["/opt/entrypoint.sh"]
+ENTRYPOINT ["docker-entrypoint.sh"]
 
 VOLUME ["$SPARK_CONF_DIR", "$SPARK_WORKER_DIR", "$SPARK_LOG_DIR"]
 

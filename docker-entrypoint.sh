@@ -3,15 +3,11 @@
 # echo commands to the terminal output
 set -ex
 
-if [ "$SPARK_MASTER_HOST" = "" ]; then
-	SPARK_MASTER_HOST=$(hostname -f)
-	echo "Master host set to $SPARK_MASTER_HOST"
-fi
+SPARK_MASTER_HOST=$(hostname -f)
+echo "Spark master host set to $SPARK_MASTER_HOST"
 
-if [ "$SPARK_LOCAL_IP" = "" ]; then
-	SPARK_LOCAL_IP=$(hostname -i)
-	echo "Local IP set to $SPARK_LOCAL_IP"
-fi
+SPARK_LOCAL_IP=$(hostname -i)
+echo "Spark local IP set to $SPARK_LOCAL_IP"
 
 SPARK_CMD="$1"
 case "$SPARK_CMD" in
@@ -20,10 +16,10 @@ case "$SPARK_CMD" in
   CLASS="org.apache.spark.deploy.master.Master"
     CMD=(
       spark-daemon.sh start $CLASS 1 \
-	--host $SPARK_MASTER_HOST
-	--port $SPARK_MASTER_PORT
-	--webui-port $SPARK_MASTER_WEBUI_PORT \
-	  "$@"
+        --host $SPARK_MASTER_HOST \
+        --port $SPARK_MASTER_PORT \
+        --webui-port $SPARK_MASTER_WEBUI_PORT \
+          "$@"
     )
     ;;
   worker)
@@ -31,8 +27,8 @@ case "$SPARK_CMD" in
   CLASS="org.apache.spark.deploy.worker.Worker"
     CMD=(
       spark-daemon.sh start $CLASS 1 \
-	--webui-port $SPARK_WORKER_WEBUI_PORT \
-	  "$@"
+        --webui-port $SPARK_WORKER_WEBUI_PORT \
+          "$@"
     )
     ;;
   shell)
@@ -40,11 +36,20 @@ case "$SPARK_CMD" in
   shift 1
   CLASS="org.apache.spark.repl.Main"
     CMD=(
-	  spark-submit --class $CLASS \
-	  --name "Spark shell" \
-	  "$@"
+          spark-submit --class $CLASS \
+          --name "Spark shell" \
+          "$@"
     )
     ;;
+  thriftserver)
+  shift 1
+  CLASS="org.apache.spark.sql.hive.thriftserver.HiveThriftServer2"
+    CMD=(
+      spark-daemon.sh submit $CLASS 1 \
+      --name "Thrift JDBC/ODBC Server" \
+        "$@"
+   )
+   ;;
   *)
     echo "Unknown command: $SPARK_CMD" 1>&2
     exit 1
