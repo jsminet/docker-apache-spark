@@ -15,7 +15,7 @@ services:
     command: worker spark://spark-master:7077
     environment:
       SPARK_WORKER_CORES: 1
-	  SPARK_WORKER_WEBUI_PORT: 8081
+      SPARK_WORKER_WEBUI_PORT: 8081
 
   spark-worker-2:
     image: jsminet/docker-apache-spark:latest
@@ -24,11 +24,11 @@ services:
     command: worker spark://spark-master:7077
     environment:
       SPARK_WORKER_CORES: 1
-	  SPARK_WORKER_WEBUI_PORT: 8082
+      SPARK_WORKER_WEBUI_PORT: 8082
 
   spark-thriftserver:
     image: jsminet/docker-apache-spark:latest
-	ports:
+    ports:
       - "4040:4040"
-	  - "10000:10000"
+      - "10000:10000"
     command: thriftserver --master spark://spark-master:7077
