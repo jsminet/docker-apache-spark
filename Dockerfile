@@ -53,6 +53,6 @@ RUN     wget --progress=bar:force:noscroll -O kyuubi-spark-bin-hadoop.tgz \
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 
-VOLUME ["$SPARK_CONF_DIR", "$SPARK_WORKER_DIR", "$SPARK_LOG_DIR", "$KYUUBI_CONF_DIR", "$KYUUBI_LOG_DIR"]
+VOLUME ["$SPARK_CONF_DIR", "$SPARK_WORKER_DIR", "$SPARK_LOG_DIR", "$KYUUBI_CONF_DIR", "$KYUUBI_LOG_DIR", "$KYUUBI_PID_DIR"]
 
 CMD ["master"]

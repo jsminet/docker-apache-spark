@@ -3,6 +3,10 @@
 # echo commands to the terminal output
 set -ex
 
+SPARK_MASTER_PORT="${SPARK_MASTER_PORT:-7077}"
+SPARK_MASTER_WEBUI_PORT="${SPARK_MASTER_WEBUI_PORT:-8080}"
+SPARK_WORKER_WEBUI_PORT="${SPARK_WORKER_WEBUI_PORT:-8081}"
+
 SPARK_MASTER_HOST=$(hostname -f)
 echo "Spark master host set to $SPARK_MASTER_HOST"
 
@@ -50,10 +54,17 @@ case "$SPARK_CMD" in
         "$@"
    )
    ;;
+  kyuubi)
+  shift 1
+    CMD=(
+      kyuubi run \
+        "$@"
+   )
+   ;;
   *)
     echo "Unknown command: $SPARK_CMD" 1>&2
     exit 1
 esac
 
 # Execute the container CMD under tini for better hygiene
-exec /sbin/tini -s -- "${CMD[@]}"
+exec /usr/bin/tini -s -- "${CMD[@]}"
