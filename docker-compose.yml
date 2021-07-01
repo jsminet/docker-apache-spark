@@ -1,0 +1,27 @@
+version: '3.7'
+
+services:
+  spark-master:
+    image: kyuubi:latest
+    env_file: .env
+    ports:
+      - "8080:8080"
+      - "7077:7077"
+  
+  spark-worker-1:
+    image: kyuubi:latest
+    env_file: .env
+    depends_on: 
+      - spark-master
+    ports:
+      - "8081:8081"
+    command: worker spark://spark-master:7077
+    environment:
+      SPARK_WORKER_CORES: 1
+      SPARK_WORKER_WEBUI_PORT: 8081
+  
+  mysql:
+    image: jsminet/docker-mysql-foodmart:latest
+    env_file: .env
+    ports:
+      - "3306:3306"
