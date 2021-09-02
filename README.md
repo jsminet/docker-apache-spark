@@ -1,5 +1,5 @@
 # docker-apache-spark
-Docker image for Apache Spark WIP
+Docker image for Apache Spark version 2
 
 # Docker compose usage
 
