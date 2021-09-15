@@ -2,26 +2,30 @@ version: '3.7'
 
 services:
   spark-master:
-    image: kyuubi:latest
-    env_file: .env
+    image: ${SPARK_IMAGE}
+    environment: 
+      - "SPARK_MASTER_PORT=$SPARK_MASTER_PORT"
+      - "SPARK_MASTER_WEBUI_PORT=$SPARK_MASTER_WEBUI_PORT"
     ports:
-      - "8080:8080"
-      - "7077:7077"
-  
+      - "$SPARK_MASTER_WEBUI_PORT:$SPARK_MASTER_WEBUI_PORT"
+
   spark-worker-1:
-    image: kyuubi:latest
-    env_file: .env
+    image: ${SPARK_IMAGE}
+    environment: 
+      - "SPARK_WORKER_CORES=$SPARK_WORKER_CORES"
+      - "SPARK_WORKER_MEMORY=$SPARK_WORKER_MEMORY"
+    ports:
+      - "$SPARK_WORKER_WEBUI_PORT:$SPARK_WORKER_WEBUI_PORT"
     depends_on: 
       - spark-master
+    command: worker spark://spark-master:$SPARK_MASTER_PORT
+
+  thriftserver:
+    image: ${SPARK_IMAGE}
+    environment: 
+      - "HIVE_SERVER2_THRIFT_PORT=$HIVE_SERVER2_THRIFT_PORT"
     ports:
-      - "8081:8081"
-    command: worker spark://spark-master:7077
-    environment:
-      SPARK_WORKER_CORES: 1
-      SPARK_WORKER_WEBUI_PORT: 8081
-  
-  mysql:
-    image: jsminet/docker-mysql-foodmart:latest
-    env_file: .env
-    ports:
-      - "3306:3306"
+      - "$HIVE_SERVER2_THRIFT_PORT:$HIVE_SERVER2_THRIFT_PORT"
+    depends_on: 
+      - spark-worker
+    command: thriftserver --master spark://spark-master:$SPARK_MASTER_PORT --verbose
