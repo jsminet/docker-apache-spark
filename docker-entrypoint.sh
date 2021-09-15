@@ -6,9 +6,6 @@ set -ex
 SPARK_MASTER_HOST=$(hostname -f)
 echo "Spark master host set to $SPARK_MASTER_HOST"
 
-SPARK_LOCAL_IP=$(hostname -i)
-echo "Spark local IP set to $SPARK_LOCAL_IP"
-
 SPARK_CMD="$1"
 case "$SPARK_CMD" in
   master)
