@@ -29,3 +29,11 @@ services:
     depends_on: 
       - spark-worker
     command: thriftserver --master spark://spark-master:$SPARK_MASTER_PORT --verbose
+
+  kyuubi:
+    image: ${SPARK_IMAGE}
+    ports:
+      - "$KYUUBI_FRONTEND_BIND_PORT:$KYUUBI_FRONTEND_BIND_PORT"
+    depends_on: 
+      - spark-master
+    command: kyuubi
