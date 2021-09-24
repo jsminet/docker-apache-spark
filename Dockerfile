@@ -47,7 +47,7 @@ RUN     set -ex && \
         sed -i 's/http:\/\/deb.\(.*\)/https:\/\/deb.\1/g' /etc/apt/sources.list && \
         apt-get update && \
         ln -s /lib /lib64 && \
-        apt install -y ${BUILD_DEPS} \
+        apt install -y ${BUILD_DEPS} && \
         wget --progress=bar:force:noscroll -O kyuubi-spark-bin-hadoop.tgz \
                 "https://github.com/NetEase/kyuubi/releases/download/v${KYUUBI_VERSION}/kyuubi-${KYUUBI_VERSION}-bin-spark-${SPARK_MAJOR_VERSION}-hadoop${HADOOP_VERSION}.tar.gz" && \
         tar -xvf kyuubi-spark-bin-hadoop.tgz && \
