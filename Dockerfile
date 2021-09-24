@@ -1,4 +1,4 @@
-FROM openjdk:11-jre-slim
+FROM openjdk:8
 LABEL maintainer="JS Minet"
 
 ENV KYUUBI_VERSION 1.2.0
@@ -28,7 +28,6 @@ ENV SPARK_NO_DAEMONIZE true
 ENV BUILD_DEPS \
  bash \
  coreutils \
- krb5-user \
  libc6 \
  libpam-modules \
  libnss3 \
@@ -48,9 +47,8 @@ RUN     set -ex && \
         sed -i 's/http:\/\/deb.\(.*\)/https:\/\/deb.\1/g' /etc/apt/sources.list && \
         apt-get update && \
         ln -s /lib /lib64 && \
-        apt install -y ${BUILD_DEPS}
-
-RUN     wget --progress=bar:force:noscroll -O kyuubi-spark-bin-hadoop.tgz \
+        apt install -y ${BUILD_DEPS} \
+        wget --progress=bar:force:noscroll -O kyuubi-spark-bin-hadoop.tgz \
                 "https://github.com/NetEase/kyuubi/releases/download/v${KYUUBI_VERSION}/kyuubi-${KYUUBI_VERSION}-bin-spark-${SPARK_MAJOR_VERSION}-hadoop${HADOOP_VERSION}.tar.gz" && \
         tar -xvf kyuubi-spark-bin-hadoop.tgz && \
         rm kyuubi-spark-bin-hadoop.tgz && \
