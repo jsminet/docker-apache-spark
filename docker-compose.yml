@@ -51,3 +51,4 @@ networks:
   default:
     driver: bridge
     external: false
+    attachable: false
