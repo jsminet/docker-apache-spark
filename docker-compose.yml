@@ -37,3 +37,8 @@ services:
     depends_on: 
       - spark-master
     command: kyuubi
+
+networks:
+  default:
+    driver: bridge
+    external: false
