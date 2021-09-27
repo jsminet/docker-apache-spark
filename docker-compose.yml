@@ -9,7 +9,7 @@ services:
     ports:
       - "$SPARK_MASTER_WEBUI_PORT:$SPARK_MASTER_WEBUI_PORT"
 
-  spark-worker-1:
+  spark-worker:
     image: ${SPARK_IMAGE}
     environment: 
       - "SPARK_WORKER_CORES=$SPARK_WORKER_CORES"
