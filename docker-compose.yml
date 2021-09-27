@@ -8,6 +8,9 @@ services:
       - "SPARK_MASTER_WEBUI_PORT=$SPARK_MASTER_WEBUI_PORT"
     ports:
       - "$SPARK_MASTER_WEBUI_PORT:$SPARK_MASTER_WEBUI_PORT"
+    deploy:
+      placement:
+        constraints: [node.role == manager]
 
   spark-worker:
     image: ${SPARK_IMAGE}
@@ -29,6 +32,9 @@ services:
     depends_on: 
       - spark-worker
     command: thriftserver --master spark://spark-master:$SPARK_MASTER_PORT --verbose
+    deploy:
+      placement:
+        constraints: [node.role == manager]
 
   kyuubi:
     image: ${SPARK_IMAGE}
@@ -37,6 +43,9 @@ services:
     depends_on: 
       - spark-master
     command: kyuubi
+    deploy:
+      placement:
+        constraints: [node.role == manager]
 
 networks:
   default:
