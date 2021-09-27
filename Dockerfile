@@ -1,4 +1,4 @@
-FROM openjdk:8
+FROM openjdk:8-alpine
 LABEL maintainer="JS Minet"
 
 ENV KYUUBI_VERSION 1.2.0
@@ -28,9 +28,6 @@ ENV SPARK_NO_DAEMONIZE true
 ENV BUILD_DEPS \
  bash \
  coreutils \
- libc6 \
- libpam-modules \
- libnss3 \
  procps \
  tar \
  tini \
@@ -42,19 +39,17 @@ COPY docker-entrypoint.sh /usr/local/bin/
 
 WORKDIR /opt
 
-
-RUN     set -ex && \
-        sed -i 's/http:\/\/deb.\(.*\)/https:\/\/deb.\1/g' /etc/apt/sources.list && \
-        apt-get update && \
-        ln -s /lib /lib64 && \
-        apt install -y ${BUILD_DEPS} && \
-        wget --progress=bar:force:noscroll -O kyuubi-spark-bin-hadoop.tgz \
-                "https://github.com/NetEase/kyuubi/releases/download/v${KYUUBI_VERSION}/kyuubi-${KYUUBI_VERSION}-bin-spark-${SPARK_MAJOR_VERSION}-hadoop${HADOOP_VERSION}.tar.gz" && \
-        tar -xvf kyuubi-spark-bin-hadoop.tgz && \
-        rm kyuubi-spark-bin-hadoop.tgz && \
-        cd ${SPARK_HOME} && \
-        chmod +x /usr/local/bin/docker-entrypoint.sh && \
-        rm -rf /var/cache/apt/*
+RUN set -ex && \
+  apk update && \
+  apk add --no-cache ${BUILD_DEPS} && \
+  wget --progress=bar:force:noscroll -O kyuubi-spark-bin-hadoop.tgz \
+             "https://github.com/NetEase/kyuubi/releases/download/v${KYUUBI_VERSION}/kyuubi-${KYUUBI_VERSION}-bin-spark-${SPARK_MAJOR_VERSION}-hadoop${HADOOP_VERSION}.tar.gz" && \ 
+  tar -xvf kyuubi-spark-bin-hadoop.tgz && \
+  rm kyuubi-spark-bin-hadoop.tgz && \
+  cd ${SPARK_HOME} && \
+  chmod +x /usr/local/bin/docker-entrypoint.sh && \
+  apk del tar wget && \
+  rm -rf /var/cache/apk/*
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 
