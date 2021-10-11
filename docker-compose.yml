@@ -8,9 +8,12 @@ services:
       - "SPARK_MASTER_WEBUI_PORT=$SPARK_MASTER_WEBUI_PORT"
     ports:
       - "$SPARK_MASTER_WEBUI_PORT:$SPARK_MASTER_WEBUI_PORT"
+    networks:
+      - "spark"
     deploy:
       placement:
         constraints: [node.role == manager]
+    
 
   spark-worker:
     image: ${SPARK_IMAGE}
@@ -19,36 +22,8 @@ services:
       - "SPARK_WORKER_MEMORY=$SPARK_WORKER_MEMORY"
     ports:
       - "$SPARK_WORKER_WEBUI_PORT:$SPARK_WORKER_WEBUI_PORT"
+    networks:
+      - "spark"
     depends_on: 
       - spark-master
     command: worker spark://spark-master:$SPARK_MASTER_PORT
-
-  thriftserver:
-    image: ${SPARK_IMAGE}
-    environment: 
-      - "HIVE_SERVER2_THRIFT_PORT=$HIVE_SERVER2_THRIFT_PORT"
-    ports:
-      - "$HIVE_SERVER2_THRIFT_PORT:$HIVE_SERVER2_THRIFT_PORT"
-    depends_on: 
-      - spark-worker
-    command: thriftserver --master spark://spark-master:$SPARK_MASTER_PORT --verbose
-    deploy:
-      placement:
-        constraints: [node.role == manager]
-
-  kyuubi:
-    image: ${SPARK_IMAGE}
-    ports:
-      - "$KYUUBI_FRONTEND_BIND_PORT:$KYUUBI_FRONTEND_BIND_PORT"
-    depends_on: 
-      - spark-master
-    command: kyuubi
-    deploy:
-      placement:
-        constraints: [node.role == manager]
-
-networks:
-  default:
-    driver: bridge
-    external: false
-    attachable: false
