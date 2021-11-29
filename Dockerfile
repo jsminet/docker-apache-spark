@@ -1,12 +1,12 @@
 FROM openjdk:8-jdk-slim-buster
 LABEL maintainer="JS Minet"
 
-ENV KYUUBI_VERSION 1.2.0
-ENV SPARK_MAJOR_VERSION 3.1
-ENV SPARK_MINOR_VERSION 3.1.2
+ENV KYUUBI_VERSION 1.3.1-incubating
+ENV SPARK_MAJOR_VERSION 3.2
+ENV SPARK_MINOR_VERSION 3.2.0
 ENV HADOOP_VERSION 3.2
 
-ENV KYUUBI_HOME /opt/kyuubi-${KYUUBI_VERSION}-bin-spark-${SPARK_MAJOR_VERSION}-hadoop${HADOOP_VERSION}
+ENV KYUUBI_HOME /opt/apache-kyuubi-${KYUUBI_VERSION}-bin
 ENV KYUUBI_CONF_DIR ${KYUUBI_HOME}/conf
 ENV KYUUBI_LOG_DIR ${KYUUBI_HOME}/logs
 ENV KYUUBI_PID_DIR ${KYUUBI_HOME}/pid
@@ -38,11 +38,15 @@ WORKDIR /opt
 RUN set -ex && \
   apt-get update && DEBIAN_FRONTEND=noninteractive && \
   apt-get install -y ${BUILD_DEPS} && \
-  wget --progress=bar:force:noscroll -O kyuubi-spark-bin-hadoop.tgz \
-             "https://github.com/NetEase/kyuubi/releases/download/v${KYUUBI_VERSION}/kyuubi-${KYUUBI_VERSION}-bin-spark-${SPARK_MAJOR_VERSION}-hadoop${HADOOP_VERSION}.tar.gz" && \ 
-  tar -xvf kyuubi-spark-bin-hadoop.tgz && \
-  rm kyuubi-spark-bin-hadoop.tgz && \
-  cd ${SPARK_HOME} && \
+  wget --progress=bar:force:noscroll -O kyuubi-bin.tgz \
+                "https://dlcdn.apache.org/incubator/kyuubi/kyuubi-${KYUUBI_VERSION}/apache-kyuubi-${KYUUBI_VERSION}-bin.tgz" && \ 
+  tar -xvf kyuubi-bin.tgz && \
+  rm kyuubi-bin.tgz && \
+  cd ${KYUUBI_HOME}/externals && \
+  wget --progress=bar:force:noscroll -O spark-bin.tgz \
+                "https://dlcdn.apache.org/spark/spark-3.2.0/spark-3.2.0-bin-hadoop3.2.tgz" && \
+  tar -xvf spark-bin.tgz && \
+  rm spark-bin.tgz && \
   chmod +x /usr/local/bin/docker-entrypoint.sh && \
   rm -rf /var/lib/apt/lists/*
 
