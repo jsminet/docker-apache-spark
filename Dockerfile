@@ -39,12 +39,12 @@ RUN set -ex && \
   apt-get update && DEBIAN_FRONTEND=noninteractive && \
   apt-get install -y ${BUILD_DEPS} && \
   wget --progress=bar:force:noscroll -O kyuubi-bin.tgz \
-                "https://dlcdn.apache.org/incubator/kyuubi/kyuubi-${KYUUBI_VERSION}/apache-kyuubi-${KYUUBI_VERSION}-bin.tgz" && \ 
+      "https://dlcdn.apache.org/incubator/kyuubi/kyuubi-${KYUUBI_VERSION}/apache-kyuubi-${KYUUBI_VERSION}-bin.tgz" && \ 
   tar -xvf kyuubi-bin.tgz && \
   rm kyuubi-bin.tgz && \
   cd ${KYUUBI_HOME}/externals && \
   wget --progress=bar:force:noscroll -O spark-bin.tgz \
-                "https://dlcdn.apache.org/spark/spark-3.2.0/spark-3.2.0-bin-hadoop3.2.tgz" && \
+      "https://dlcdn.apache.org/spark/spark-${SPARK_MINOR_VERSION}/spark-${SPARK_MINOR_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz" && \
   tar -xvf spark-bin.tgz && \
   rm spark-bin.tgz && \
   chmod +x /usr/local/bin/docker-entrypoint.sh && \
