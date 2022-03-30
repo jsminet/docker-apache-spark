@@ -1,7 +1,7 @@
 FROM openjdk:8-jdk-slim-buster
 LABEL maintainer="JS Minet"
 
-ENV KYUUBI_VERSION 1.4.1-incubating
+ENV KYUUBI_VERSION 1.5.0-incubating
 ENV SPARK_MAJOR_VERSION 3.2
 ENV SPARK_MINOR_VERSION 3.2.1
 ENV HADOOP_VERSION 3.2
