@@ -1,7 +1,7 @@
 FROM openjdk:8-jdk-slim-buster
 LABEL maintainer="JS Minet"
 
-ARG BUILD_DEPS="tini wget" \
+ENV BUILD_DEPS="tini wget" \
     KYUUBI_VERSION=1.5.1-incubating \
     SPARK_MAJOR_VERSION=3.2 \
     SPARK_MINOR_VERSION=3.2.1 \
