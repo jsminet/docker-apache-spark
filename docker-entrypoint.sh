@@ -44,6 +44,7 @@ case "$SPARK_CMD" in
   CLASS="org.apache.spark.deploy.worker.Worker"
     CMD=(
       spark-daemon.sh start $CLASS 1 \
+        --host $HOSTNAME \
         --webui-port $SPARK_WORKER_WEBUI_PORT \
           "$@"
     )
