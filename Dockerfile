@@ -2,10 +2,10 @@ FROM openjdk:11-jdk-slim-buster
 LABEL maintainer="JS Minet"
 
 ENV BUILD_DEPS="tini wget" \
-    KYUUBI_VERSION=1.6.1-incubating \
-    SPARK_MAJOR_VERSION=3.2 \
-    SPARK_MINOR_VERSION=3.2.3 \
-    HADOOP_VERSION=3.2
+    KYUUBI_VERSION=1.7.0 \
+    SPARK_MAJOR_VERSION=3.3 \
+    SPARK_MINOR_VERSION=3.3.2 \
+    HADOOP_VERSION=3
 
 COPY docker-entrypoint.sh /usr/local/bin/
 
@@ -15,7 +15,7 @@ RUN set -ex && \
   apt-get update && DEBIAN_FRONTEND=noninteractive && \
   apt-get install -y ${BUILD_DEPS} && \
   wget --progress=bar:force:noscroll -O kyuubi-bin.tgz \
-      "https://dlcdn.apache.org/incubator/kyuubi/kyuubi-${KYUUBI_VERSION}/apache-kyuubi-${KYUUBI_VERSION}-bin.tgz" && \ 
+      "https://dlcdn.apache.org/kyuubi/kyuubi-${KYUUBI_VERSION}/apache-kyuubi-${KYUUBI_VERSION}-bin.tgz" && \ 
   tar -xvf kyuubi-bin.tgz && \
   rm kyuubi-bin.tgz && \
   cd /opt/apache-kyuubi-${KYUUBI_VERSION}-bin/externals && \
