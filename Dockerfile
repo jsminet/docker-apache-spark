@@ -1,10 +1,10 @@
-FROM openjdk:11-jdk-slim-buster
+FROM openjdk:17-jdk-slim-buster
 LABEL maintainer="JS Minet"
 
 ENV BUILD_DEPS="tini wget" \
-    KYUUBI_VERSION=1.7.0 \
+    KYUUBI_VERSION=1.8.0 \
     SPARK_MAJOR_VERSION=3.3 \
-    SPARK_MINOR_VERSION=3.3.2 \
+    SPARK_MINOR_VERSION=3.5.0 \
     HADOOP_VERSION=3
 
 COPY docker-entrypoint.sh /usr/local/bin/
