@@ -1,24 +1,18 @@
-version: '3.7'
-
 services:
   spark-master:
     image: ${SPARK_IMAGE}
     build: .
     environment: 
-      - "SPARK_MASTER_PORT=$SPARK_MASTER_PORT"
-      - "SPARK_MASTER_WEBUI_PORT=$SPARK_MASTER_WEBUI_PORT"
+      - SPARK_MASTER_PORT
+      - SPARK_MASTER_WEBUI_PORT
     ports:
       - "$SPARK_MASTER_WEBUI_PORT:$SPARK_MASTER_WEBUI_PORT"
-    deploy:
-      placement:
-        constraints: [node.role == manager]
     
-
   spark-worker:
     image: ${SPARK_IMAGE}
     environment: 
-      - "SPARK_WORKER_CORES=$SPARK_WORKER_CORES"
-      - "SPARK_WORKER_MEMORY=$SPARK_WORKER_MEMORY"
+      - SPARK_WORKER_CORES
+      - SPARK_WORKER_MEMORY
     ports:
       - "$SPARK_WORKER_WEBUI_PORT:$SPARK_WORKER_WEBUI_PORT"
     depends_on: 
