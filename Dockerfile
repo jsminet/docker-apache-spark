@@ -2,7 +2,7 @@ FROM openjdk:17-jdk-slim-buster
 LABEL maintainer="JS Minet"
 
 ENV BUILD_DEPS="tini wget" \
-    KYUUBI_VERSION=1.8.1 \
+    KYUUBI_VERSION=1.9.1 \
     SPARK_VERSION=3.5.1 \
     HADOOP_VERSION=3
 
