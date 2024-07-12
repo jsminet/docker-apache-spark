@@ -1,0 +1,48 @@
+version: '3.7'
+
+services:
+
+  spark-master:
+    image: jsminet/docker-apache-spark:2.4.8
+    networks: 
+      - spark
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+    environment: 
+      - "SPARK_MASTER_PORT=7077"
+      - "SPARK_MASTER_WEBUI_PORT=8080"
+    ports:
+      - "8080:8080"
+
+  spark-worker:
+    image: jsminet/docker-apache-spark:2.4.8
+    networks: 
+      - spark
+    environment: 
+      - "SPARK_WORKER_CORES=2"
+      - "SPARK_WORKER_MEMORY=8g"
+    ports:
+      - "8081:8081"
+    depends_on: 
+      - spark-master
+    command: worker spark://spark-master:7077
+
+  thriftserver:
+    image: jsminet/docker-apache-spark:2.4.8
+    networks: 
+      - spark
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+    environment: 
+      - "HIVE_SERVER2_THRIFT_PORT=10000"
+    ports:
+      - "10000:10000"
+    depends_on: 
+      - spark-worker
+    command: thriftserver --master spark://spark-master:7077 --verbose
+
+networks:
+  spark:
+    driver: overlay
