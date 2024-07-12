@@ -2,14 +2,31 @@
 
 # echo commands to the terminal output
 set -ex
+HOSTNAME=$(hostname -f)
 
-SPARK_MASTER_HOST=$(hostname -f)
-echo "Spark master host set to $SPARK_MASTER_HOST"
+export KYUUBI_HOME=/opt/apache-kyuubi-${KYUUBI_VERSION}-bin
+export KYUUBI_CONF_DIR=${KYUUBI_HOME}/conf
+export KYUUBI_LOG_DIR=${KYUUBI_HOME}/logs
+export KYUUBI_PID_DIR=${KYUUBI_HOME}/pid
+
+export SPARK_MASTER_PORT=${SPARK_MASTER_PORT:-7077}
+export SPARK_MASTER_WEBUI_PORT=${SPARK_MASTER_WEBUI_PORT:-8080}
+export SPARK_WORKER_WEBUI_PORT=${SPARK_WORKER_WEBUI_PORT:-8081}
+export SPARK_HOME=${KYUUBI_HOME}/externals/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_MAJOR_VERSION}
+export SPARK_CONF_DIR=$SPARK_HOME/conf
+export SPARK_WORKER_DIR=$SPARK_HOME/work
+export SPARK_LOG_DIR=$SPARK_HOME/logs
+export SPARK_NO_DAEMONIZE=true
+
+export PATH=$PATH:${SPARK_HOME}/bin:${SPARK_HOME}/sbin:${KYUUBI_HOME}/bin
 
 SPARK_CMD="$1"
 case "$SPARK_CMD" in
   master)
   shift 1
+  export SPARK_MASTER_HOST=$HOSTNAME
+  echo "Spark master host set to $SPARK_MASTER_HOST"
+
   CLASS="org.apache.spark.deploy.master.Master"
     CMD=(
       spark-daemon.sh start $CLASS 1 \
@@ -24,6 +41,7 @@ case "$SPARK_CMD" in
   CLASS="org.apache.spark.deploy.worker.Worker"
     CMD=(
       spark-daemon.sh start $CLASS 1 \
+        --host $HOSTNAME \
         --webui-port $SPARK_WORKER_WEBUI_PORT \
           "$@"
     )
@@ -47,10 +65,17 @@ case "$SPARK_CMD" in
         "$@"
    )
    ;;
+  kyuubi)
+  shift 1
+    CMD=(
+      kyuubi run \
+        "$@"
+   )
+   ;;
   *)
     echo "Unknown command: $SPARK_CMD" 1>&2
     exit 1
 esac
 
 # Execute the container CMD under tini for better hygiene
-exec /sbin/tini -s -- "${CMD[@]}"
+exec tini -s -- "${CMD[@]}"

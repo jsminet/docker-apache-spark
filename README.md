@@ -1,16 +1,9 @@
 # docker-apache-spark
-Docker image for Apache Spark version 2
+Docker image for Apache Spark with Kyuubi and Thrift Server integration.
+Don't use both in same time, choose your need.
 
-# Docker compose usage
-
-Launching Spark cluster with compose
-
-```docker compose --env-file .env -f docker-compose.yml up```
-
-Launch shortcut command 
-
+## To use Docker compose
 ```docker compose up```
 
-Launching Spark cluster for Swarm
-
-```docker stack deploy -c docker-stack.yml```
+## To use Docker swarm
+```docker stack deploy -c <(docker-compose config) stack-name-here```
