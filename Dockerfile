@@ -29,7 +29,7 @@ ENV ICEBERG_SPARK_JAR_NAME=iceberg-spark-runtime-${SPARK_BINARY_VERSION}_${SCALA
 
 ENV SPARK_HOME=${KYUUBI_HOME}/externals/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_MAJOR_VERSION}
     
-COPY --chmod=+x docker-entrypoint.sh /usr/local/bin/
+COPY --chmod=755 docker-entrypoint.sh /usr/local/bin/
 
 WORKDIR /opt
 
@@ -52,7 +52,7 @@ RUN set -ex && \
   wget ${WGET_OPTS} ${MAVEN_MIRROR}/org/apache/hadoop/${HADOOP_CLOUD_STORAGE_JAR_NAME}/${SPARK_HADOOP_VERSION}/${HADOOP_CLOUD_STORAGE_JAR_NAME}-${SPARK_HADOOP_VERSION}.jar \
            -P ${SPARK_HOME}/jars && \
   wget ${WGET_OPTS} ${MAVEN_MIRROR}/org/apache/hadoop/${HADOOP_CLOUD_STORAGE_JAR_NAME}/${KYUUBI_HADOOP_VERSION}/${HADOOP_CLOUD_STORAGE_JAR_NAME}-${KYUUBI_HADOOP_VERSION}.jar \ 
-            -P ${KYUUBI_HOME}/jars && \
+           -P ${KYUUBI_HOME}/jars && \
   wget ${WGET_OPTS} ${MAVEN_MIRROR}/org/apache/hadoop/${HADOOP_AWS_JAR_NAME}/${SPARK_HADOOP_VERSION}/${HADOOP_AWS_JAR_NAME}-${SPARK_HADOOP_VERSION}.jar \
            -P ${SPARK_HOME}/jars && \
   wget ${WGET_OPTS} ${MAVEN_MIRROR}/org/apache/hadoop/${HADOOP_AWS_JAR_NAME}/${KYUUBI_HADOOP_VERSION}/${HADOOP_AWS_JAR_NAME}-${KYUUBI_HADOOP_VERSION}.jar \
