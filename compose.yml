@@ -1,6 +1,6 @@
 services:
   spark-master:
-    image: ${SPARK_IMAGE}
+    image: $SPARK_IMAGE:$SPARK_VERSION
     build: .
     environment: 
       - SPARK_MASTER_PORT
@@ -10,7 +10,8 @@ services:
       - $SPARK_MASTER_WEBUI_PORT:$SPARK_MASTER_WEBUI_PORT
     
   spark-worker:
-    image: ${SPARK_IMAGE}
+    image: $SPARK_IMAGE:$SPARK_VERSION
+    build: .
     environment: 
       - SPARK_WORKER_CORES
       - SPARK_WORKER_MEMORY
@@ -21,7 +22,8 @@ services:
     command: worker spark://spark-master:$SPARK_MASTER_PORT
 
   thriftserver:
-    image: ${SPARK_IMAGE}
+    image: $SPARK_IMAGE:$SPARK_VERSION
+    build: .
     environment: 
       - HIVE_SERVER2_THRIFT_PORT
     ports:
