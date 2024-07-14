@@ -5,8 +5,9 @@ services:
     environment: 
       - SPARK_MASTER_PORT
       - SPARK_MASTER_WEBUI_PORT
+      - SPARK_DRIVER_MEMORY
     ports:
-      - "$SPARK_MASTER_WEBUI_PORT:$SPARK_MASTER_WEBUI_PORT"
+      - $SPARK_MASTER_WEBUI_PORT:$SPARK_MASTER_WEBUI_PORT
     
   spark-worker:
     image: ${SPARK_IMAGE}
@@ -14,7 +15,17 @@ services:
       - SPARK_WORKER_CORES
       - SPARK_WORKER_MEMORY
     ports:
-      - "$SPARK_WORKER_WEBUI_PORT:$SPARK_WORKER_WEBUI_PORT"
+      - $SPARK_WORKER_WEBUI_PORT:$SPARK_WORKER_WEBUI_PORT
     depends_on: 
       - spark-master
     command: worker spark://spark-master:$SPARK_MASTER_PORT
+
+  thriftserver:
+    image: ${SPARK_IMAGE}
+    environment: 
+      - HIVE_SERVER2_THRIFT_PORT
+    ports:
+      - $HIVE_SERVER2_THRIFT_PORT:$HIVE_SERVER2_THRIFT_PORT
+    depends_on: 
+      - spark-worker
+    command: thriftserver --master spark://spark-master:$SPARK_MASTER_PORT --verbose
