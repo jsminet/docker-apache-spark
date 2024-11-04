@@ -1,7 +1,7 @@
 FROM openjdk:17-jdk-slim-buster
 LABEL maintainer="JS Minet"
 
-ARG SPARK_VERSION=3.5.1 \
+ARG SPARK_VERSION=3.5.2 \
     HADOOP_MAJOR_VERSION=3
 
 ENV BUILD_DEPS="tini wget" \
@@ -15,7 +15,7 @@ RUN set -ex && \
   apt-get update && DEBIAN_FRONTEND=noninteractive && \
   apt-get install -y ${BUILD_DEPS} && \
   wget --progress=bar:force:noscroll -O spark-bin.tgz \
-      "https://dlcdn.apache.org/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_MAJOR_VERSION}.tgz" && \
+      "https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_MAJOR_VERSION}.tgz" && \
   tar -xf spark-bin.tgz && \
   ln -s /opt/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_MAJOR_VERSION} ${SPARK_HOME} && \
   rm spark-bin.tgz && \
